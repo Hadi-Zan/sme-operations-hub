@@ -1,12 +1,20 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Navigation } from "@/components/navigation";
+import { SignOutButton } from "@/components/sign-out-button";
+import type { CurrentUser } from "@/lib/auth";
+import type { Workspace, WorkspaceRole } from "@/lib/supabase/database.types";
 
 type WorkspaceShellProps = {
   children: ReactNode;
+  role: WorkspaceRole;
+  user: CurrentUser;
+  workspace: Workspace;
 };
 
-export function WorkspaceShell({ children }: WorkspaceShellProps) {
+export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShellProps) {
+  const roleLabel = role === "owner" ? "Workspace owner" : "Workspace member";
+
   return (
     <div className="min-h-screen bg-slate-100 lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen flex-col bg-slate-950 px-4 py-5 text-white lg:flex">
@@ -34,21 +42,24 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
           <div className="mb-4 rounded-xl border border-white/[0.08] bg-white/[0.04] p-4">
             <div className="flex items-center gap-2">
               <span className="size-2 rounded-full bg-emerald-300" aria-hidden="true" />
-              <p className="text-xs font-semibold text-slate-200">Brightside Services</p>
+              <p className="truncate text-xs font-semibold text-slate-200">{workspace.name}</p>
             </div>
             <p className="mt-2 text-[11px] leading-5 text-slate-500">
-              Phase 1 sample workspace. No live systems are connected.
+              Connected workspace. Operational records remain demo data in Phase 2.
             </p>
           </div>
 
           <div className="flex items-center gap-3 border-t border-white/[0.08] px-2 pt-4">
             <span className="flex size-9 items-center justify-center rounded-full bg-slate-800 text-xs font-bold text-slate-200">
-              HZ
+              {user.initials}
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-xs font-semibold text-slate-200">Hadi Zan</span>
-              <span className="block text-[11px] text-slate-500">Workspace owner</span>
-            </span>
+            <div className="min-w-0">
+              <span className="block truncate text-xs font-semibold text-slate-200">
+                {user.displayName}
+              </span>
+              <span className="block text-[11px] text-slate-500">{roleLabel}</span>
+              <SignOutButton />
+            </div>
           </div>
         </div>
       </aside>
@@ -67,7 +78,9 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
             </Link>
 
             <div className="hidden lg:block">
-              <p className="text-xs font-medium text-slate-400">Brightside Services</p>
+              <p className="max-w-72 truncate text-xs font-medium text-slate-400">
+                {workspace.name}
+              </p>
               <p className="text-sm font-semibold text-slate-800">Operations overview</p>
             </div>
 
@@ -76,8 +89,11 @@ export function WorkspaceShell({ children }: WorkspaceShellProps) {
                 Sample data
               </span>
               <span className="flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 shadow-sm lg:hidden">
-                HZ
+                {user.initials}
               </span>
+              <div className="lg:hidden">
+                <SignOutButton variant="mobile" />
+              </div>
             </div>
           </div>
 

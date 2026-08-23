@@ -5,8 +5,12 @@ import {
   summaryMetrics,
   workstreamProgress,
 } from "@/lib/demo-data";
+import { requireAccountContext } from "@/lib/auth";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const context = await requireAccountContext();
+  const firstName = context.user.displayName.split(/\s+/)[0];
+
   return (
     <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
       <section
@@ -17,13 +21,13 @@ export default function DashboardPage() {
           <div className="mb-3 flex flex-wrap items-center gap-3 text-sm text-slate-500">
             <span>Sunday, 23 August</span>
             <span aria-hidden="true" className="size-1 rounded-full bg-slate-300" />
-            <span className="font-medium text-emerald-700">Sample workspace</span>
+            <span className="font-medium text-emerald-700">Sample operations data</span>
           </div>
           <h1
             id="dashboard-heading"
             className="text-3xl font-semibold tracking-[-0.035em] text-slate-950 sm:text-4xl"
           >
-            Good morning, Hadi.
+            Good morning, {firstName}.
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
             Here is a clear view of today&apos;s work across your service operations.
