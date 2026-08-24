@@ -1,65 +1,17 @@
-export const summaryMetrics = [
-  {
-    label: "Open tasks",
-    value: "18",
-    detail: "6 scheduled for today",
-    change: "+3 this week",
-    tone: "bg-sky-50 text-sky-700 ring-sky-600/10",
-  },
-  {
-    label: "Due today",
-    value: "6",
-    detail: "2 marked as urgent",
-    change: "2 urgent",
-    tone: "bg-rose-50 text-rose-700 ring-rose-600/10",
-  },
+export const demoSummaryMetrics = [
   {
     label: "Low stock",
     value: "4",
     detail: "Across 3 supply categories",
-    change: "Review",
+    change: "Demo",
     tone: "bg-amber-50 text-amber-800 ring-amber-600/10",
   },
   {
     label: "Follow-ups",
     value: "8",
     detail: "3 customer replies pending",
-    change: "On track",
+    change: "Demo",
     tone: "bg-emerald-50 text-emerald-700 ring-emerald-600/10",
-  },
-] as const;
-export const priorityTasks = [
-  {
-    title: "Confirm air-conditioning maintenance visit",
-    customer: "Riverside Dental · Service #S-2041",
-    due: "9:30 AM",
-    owner: "Maya",
-    status: "Urgent",
-    statusTone: "bg-rose-50 text-rose-700",
-  },
-  {
-    title: "Prepare replacement filter kit",
-    customer: "Northpoint Studio · Service #S-2045",
-    due: "11:00 AM",
-    owner: "You",
-    status: "In progress",
-    statusTone: "bg-sky-50 text-sky-700",
-  },
-  {
-    title: "Send completed service report",
-    customer: "Juniper Learning Centre · Service #S-2038",
-    due: "2:00 PM",
-    owner: "Aisha",
-    status: "Ready",
-    statusTone: "bg-emerald-50 text-emerald-700",
-  },
-  {
-    title: "Review next week's technician schedule",
-    customer: "Internal operations",
-    due: "4:30 PM",
-    owner: "You",
-    status: "Planned",
-    statusTone: "bg-slate-100 text-slate-600",
   },
 ] as const;
 

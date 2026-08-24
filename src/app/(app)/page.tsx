@@ -1,15 +1,47 @@
+import Link from "next/link";
 import {
+  demoSummaryMetrics,
   followUps,
   inventoryAlerts,
-  priorityTasks,
-  summaryMetrics,
   workstreamProgress,
 } from "@/lib/demo-data";
 import { requireAccountContext } from "@/lib/auth";
+import { getDashboardTaskData } from "@/lib/task-data";
+import {
+  taskPriorityLabels,
+  taskPriorityTone,
+  taskStatusLabels,
+} from "@/lib/tasks";
 
 export default async function DashboardPage() {
   const context = await requireAccountContext();
+  if (context.status !== "configured") return null;
+
+  const taskData = await getDashboardTaskData(
+    context.workspace.id,
+    context.workspace.timezone,
+  );
   const firstName = context.user.displayName.split(/\s+/)[0];
+  const summaryMetrics = [
+    {
+      label: "Open tasks",
+      value: String(taskData.open),
+      detail: `${taskData.dueToday} scheduled for today`,
+      change: "Live",
+      tone: "bg-sky-50 text-sky-700 ring-sky-600/10",
+    },
+    {
+      label: "Due today",
+      value: String(taskData.dueToday),
+      detail:
+        taskData.urgentDueToday === 1
+          ? "1 marked as urgent"
+          : `${taskData.urgentDueToday} marked as urgent`,
+      change: "Live",
+      tone: "bg-rose-50 text-rose-700 ring-rose-600/10",
+    },
+    ...demoSummaryMetrics,
+  ];
 
   return (
     <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
@@ -19,9 +51,9 @@ export default async function DashboardPage() {
       >
         <div>
           <div className="mb-3 flex flex-wrap items-center gap-3 text-sm text-slate-500">
-            <span>Sunday, 23 August</span>
+            <span>{taskData.formattedDate}</span>
             <span aria-hidden="true" className="size-1 rounded-full bg-slate-300" />
-            <span className="font-medium text-emerald-700">Sample operations data</span>
+            <span className="font-medium text-emerald-700">Live tasks · sample operations data</span>
           </div>
           <h1
             id="dashboard-heading"
@@ -36,7 +68,7 @@ export default async function DashboardPage() {
 
         <div className="inline-flex w-fit items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
           <span className="size-1.5 rounded-full bg-amber-500" aria-hidden="true" />
-          Demo data only
+          Mixed live and demo data
         </div>
       </section>
 
@@ -75,45 +107,68 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-5 sm:px-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
-                Today
+                Live tasks
               </p>
               <h2 id="priorities-heading" className="mt-1 text-lg font-semibold text-slate-950">
                 Daily priorities
               </h2>
             </div>
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-              {priorityTasks.length} items
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                {taskData.dueToday} {taskData.dueToday === 1 ? "item" : "items"}
+              </span>
+              <Link
+                href="/tasks"
+                className="rounded-lg text-xs font-semibold text-emerald-700 outline-none transition hover:text-emerald-900 focus-visible:ring-2 focus-visible:ring-emerald-500"
+              >
+                View tasks
+              </Link>
+            </div>
           </div>
 
-          <div className="divide-y divide-slate-100">
-            {priorityTasks.map((task) => (
-              <article
-                key={task.title}
-                className="grid gap-4 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6"
-              >
-                <div className="flex min-w-0 gap-3">
-                  <span
-                    aria-hidden="true"
-                    className="mt-1.5 size-3 shrink-0 rounded-full border-2 border-slate-300 bg-white"
-                  />
-                  <div className="min-w-0">
-                    <h3 className="truncate text-sm font-semibold text-slate-900">{task.title}</h3>
-                    <p className="mt-1 truncate text-xs text-slate-500">{task.customer}</p>
+          {taskData.dailyPriorities.length ? (
+            <div className="divide-y divide-slate-100">
+              {taskData.dailyPriorities.map((task) => (
+                <article
+                  key={task.id}
+                  className="grid gap-4 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6"
+                >
+                  <div className="flex min-w-0 gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="mt-1.5 size-3 shrink-0 rounded-full border-2 border-emerald-300 bg-white"
+                    />
+                    <div className="min-w-0">
+                      <h3 className="truncate text-sm font-semibold text-slate-900">{task.title}</h3>
+                      <p className="mt-1 truncate text-xs text-slate-500">
+                        Assigned to {task.assigneeName}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3 pl-6 sm:pl-0">
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${task.statusTone}`}>
-                    {task.status}
-                  </span>
-                  <div className="text-right">
-                    <time className="block text-xs font-semibold text-slate-700">{task.due}</time>
-                    <span className="text-[11px] text-slate-400">{task.owner}</span>
+                  <div className="flex items-center gap-3 pl-6 sm:pl-0">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ring-inset ${taskPriorityTone(task.priority)}`}
+                    >
+                      {taskPriorityLabels[task.priority]}
+                    </span>
+                    <div className="text-right">
+                      <span className="block text-xs font-semibold text-slate-700">Due today</span>
+                      <span className="text-[11px] text-slate-400">
+                        {taskStatusLabels[task.status]}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-10 text-center sm:px-6">
+              <p className="text-sm font-semibold text-slate-800">No tasks are due today</p>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                New tasks with today&apos;s due date will appear here automatically.
+              </p>
+            </div>
+          )}
         </section>
 
         <section
@@ -121,7 +176,7 @@ export default async function DashboardPage() {
           className="rounded-2xl bg-slate-950 p-6 text-white shadow-[0_14px_40px_rgba(15,23,42,0.12)]"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
-            Weekly pulse
+            Demo weekly pulse
           </p>
           <h2 id="pulse-heading" className="mt-1 text-lg font-semibold">
             Work is moving steadily
@@ -170,7 +225,9 @@ export default async function DashboardPage() {
                 Inventory alerts
               </h2>
             </div>
-            <span className="text-xs font-medium text-slate-400">Updated 8:15 AM</span>
+            <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800">
+              Demo data
+            </span>
           </div>
 
           <div className="mt-5 space-y-3">
@@ -196,13 +253,18 @@ export default async function DashboardPage() {
           aria-labelledby="followups-heading"
           className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] sm:p-6"
         >
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-700">
-              Customer care
-            </p>
-            <h2 id="followups-heading" className="mt-1 text-lg font-semibold text-slate-950">
-              Upcoming follow-ups
-            </h2>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-700">
+                Customer care
+              </p>
+              <h2 id="followups-heading" className="mt-1 text-lg font-semibold text-slate-950">
+                Upcoming follow-ups
+              </h2>
+            </div>
+            <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">
+              Demo data
+            </span>
           </div>
 
           <div className="mt-5 divide-y divide-slate-100">

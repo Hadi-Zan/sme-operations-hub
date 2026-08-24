@@ -1,6 +1,6 @@
 # SME Operations Hub
 
-A straightforward operations workspace for a single small service business. Phase 2 adds Supabase email/password authentication, protected application routes, and a real workspace profile while preserving the Phase 1 operational screens as clearly labelled demo data.
+A straightforward operations workspace for a single small service business. Phase 3 adds real, workspace-scoped task management to the existing Supabase authentication and workspace foundation.
 
 ## Current scope
 
@@ -8,8 +8,10 @@ A straightforward operations workspace for a single small service business. Phas
 - Server-validated, cookie-based sessions and protected Next.js routes
 - One configured workspace per deployment
 - An owner-editable business profile backed by PostgreSQL and Row Level Security
-- Demo-only dashboard metrics, tasks, inventory, customers, and follow-ups
-- No public signup, password recovery, invitations, messaging, AI, billing, cron jobs, or operational feature databases
+- Workspace tasks with owner management, member status updates, assignment, priority, due dates, filtering, and search
+- Live Open Tasks, Due Today, and Daily Priorities dashboard sections
+- Demo-only inventory, customers, follow-ups, and non-task dashboard content
+- No public signup, password recovery, invitations, messaging, AI, billing, cron jobs, or additional operational feature databases
 
 ## Technology
 
@@ -51,7 +53,9 @@ Open [http://localhost:3000](http://localhost:3000).
 2. In **Authentication → Providers → Email**, enable email/password authentication, disable public user signup, and keep anonymous sign-ins disabled.
 3. In **Authentication → URL Configuration**, set the production Site URL and add `http://localhost:3000/**` as an allowed development redirect URL.
 4. In **Authentication → Password Security**, require at least eight characters and configure the strongest practical password rules. Enable leaked-password protection when available on the project plan.
-5. Open the Supabase SQL Editor, paste the complete contents of `supabase/migrations/20260823000000_phase_2_auth_foundation.sql`, and run it once.
+5. Open the Supabase SQL Editor and run these migrations in order:
+   1. `supabase/migrations/20260823000000_phase_2_auth_foundation.sql`
+   2. `supabase/migrations/20260824000000_phase_3_tasks.sql`
 6. In **Authentication → Users**, create the initial email/password user and ensure the email is confirmed. Copy the user's UUID.
 7. In the SQL Editor, run the following statement once after replacing the placeholder values:
 
@@ -73,8 +77,8 @@ with configured_workspace as (
   )
   returning id
 )
-insert into public.workspace_members (workspace_id, user_id, role)
-select id, 'AUTH_USER_UUID'::uuid, 'owner'
+insert into public.workspace_members (workspace_id, user_id, role, display_name)
+select id, 'AUTH_USER_UUID'::uuid, 'owner', 'Workspace Owner'
 from configured_workspace;
 ```
 
@@ -90,4 +94,4 @@ npm run lint
 npm run build
 ```
 
-The repeatable RLS checks in `supabase/tests/workspace_rls.sql` are designed for a non-production Supabase project and roll back their temporary test data.
+The repeatable RLS checks in `supabase/tests/workspace_rls.sql` and `supabase/tests/tasks_rls.sql` are designed for a non-production Supabase project and roll back their temporary test data.
