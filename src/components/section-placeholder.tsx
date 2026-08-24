@@ -16,7 +16,7 @@ export function SectionPlaceholder({
       <section aria-labelledby="section-heading" className="border-b border-slate-200 pb-7">
         <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
           <span className="size-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-          Phase 2 demo feature
+          Demo feature
         </div>
         <h1
           id="section-heading"
@@ -34,7 +34,7 @@ export function SectionPlaceholder({
           </div>
           <h2 className="mt-5 text-lg font-semibold text-slate-900">The {title.toLowerCase()} area is ready</h2>
           <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">
-            Navigation and layout are in place. Database functionality is not connected in Phase 2.
+            Navigation and layout are in place. Database functionality is not connected yet.
           </p>
           <span className="mt-5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
             No live data connected

@@ -74,12 +74,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             A calm place to keep daily work moving.
           </h2>
           <p className="mt-5 max-w-lg text-base leading-7 text-slate-400">
-            Sign in securely to access the dashboard, workspace profile, and the existing Phase 1
-            operational previews.
+            Sign in securely to access the dashboard, workspace profile, tasks, and inventory.
           </p>
         </div>
         <p className="text-xs leading-5 text-slate-500">
-          Tasks, inventory, customers, and follow-ups remain clearly labelled demo data in Phase 2.
+          Tasks and inventory use live workspace data. Customers and follow-ups remain demo features.
         </p>
       </aside>
     </main>

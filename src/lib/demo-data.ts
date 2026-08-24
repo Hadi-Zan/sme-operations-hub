@@ -1,12 +1,5 @@
 export const demoSummaryMetrics = [
   {
-    label: "Low stock",
-    value: "4",
-    detail: "Across 3 supply categories",
-    change: "Demo",
-    tone: "bg-amber-50 text-amber-800 ring-amber-600/10",
-  },
-  {
     label: "Follow-ups",
     value: "8",
     detail: "3 customer replies pending",
@@ -19,12 +12,6 @@ export const workstreamProgress = [
   { label: "Scheduled visits", value: 82, color: "bg-emerald-300" },
   { label: "Task completion", value: 72, color: "bg-sky-300" },
   { label: "Customer follow-ups", value: 61, color: "bg-amber-300" },
-] as const;
-
-export const inventoryAlerts = [
-  { name: "20 × 20 filter cartridges", reorderAt: "8 units", remaining: "3 units" },
-  { name: "Condenser cleaning solution", reorderAt: "15 litres", remaining: "9 litres" },
-  { name: "Service report booklets", reorderAt: "10 books", remaining: "6 books" },
 ] as const;
 
 export const followUps = [

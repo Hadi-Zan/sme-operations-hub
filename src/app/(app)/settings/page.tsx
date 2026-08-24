@@ -37,8 +37,7 @@ export default async function SettingsPage() {
             </p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">Workspace details</h2>
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              These are live details stored securely in Supabase. Operational feature data remains a
-              demo in Phase 2.
+              These live details are stored securely in Supabase and shared by Tasks and Inventory.
             </p>
           </div>
           <WorkspaceProfileForm canEdit={context.role === "owner"} workspace={context.workspace} />
@@ -67,11 +66,11 @@ export default async function SettingsPage() {
 
           <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
-              Phase 2 boundary
+              Current product boundary
             </p>
             <p className="mt-2 text-sm leading-6 text-amber-900">
-              Tasks, inventory, customers, follow-ups, and dashboard metrics are still sample data.
-              Their database functionality has not been added.
+              Tasks and inventory use live workspace data. Customers and follow-ups remain clearly
+              labelled demo features.
             </p>
           </section>
         </aside>

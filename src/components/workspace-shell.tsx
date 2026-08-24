@@ -45,7 +45,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
               <p className="truncate text-xs font-semibold text-slate-200">{workspace.name}</p>
             </div>
             <p className="mt-2 text-[11px] leading-5 text-slate-500">
-              Tasks use live workspace data. Other operational areas remain demo data.
+              Tasks and inventory use live workspace data. Customer features remain demo data.
             </p>
           </div>
 
@@ -86,7 +86,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
 
             <div className="flex items-center gap-3">
               <span className="hidden rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 sm:inline-flex">
-                Live tasks · demo operations
+                Live tasks and inventory · demo customer features
               </span>
               <span className="flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 shadow-sm lg:hidden">
                 {user.initials}
