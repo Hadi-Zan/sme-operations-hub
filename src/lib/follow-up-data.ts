@@ -91,7 +91,7 @@ async function getWorkspaceFollowUps(workspaceId: string, timeZone: string) {
     supabase.from("follow_ups").select(followUpColumns).eq("workspace_id", workspaceId),
     supabase
       .from("customers")
-      .select("id, name, contact_name, is_active")
+      .select("id, name, contact_name, email, phone, is_active")
       .eq("workspace_id", workspaceId)
       .order("name"),
     supabase
@@ -107,9 +107,11 @@ async function getWorkspaceFollowUps(workspaceId: string, timeZone: string) {
 
   const customers: FollowUpCustomerOption[] = customersResult.data.map((customer) => ({
     contactName: customer.contact_name,
+    email: customer.email,
     id: customer.id,
     isActive: customer.is_active,
     name: customer.name,
+    phone: customer.phone,
   }));
   const members: FollowUpMemberOption[] = membersResult.data.map((member) => ({
     displayName: member.display_name,

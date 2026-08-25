@@ -16,9 +16,11 @@ export type FollowUpFilters = {
 
 export type FollowUpCustomerOption = {
   contactName: string | null;
+  email: string | null;
   id: string;
   isActive: boolean;
   name: string;
+  phone: string | null;
 };
 
 export type FollowUpMemberOption = {

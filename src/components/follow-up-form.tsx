@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import {
   createFollowUp,
   updateFollowUp,
   type FollowUpActionState,
 } from "@/app/(app)/follow-ups/actions";
+import { CustomerCombobox } from "@/components/customer-combobox";
 import type {
   FollowUpCustomerOption,
   FollowUpListItem,
@@ -46,6 +47,7 @@ export function FollowUpForm({
     (defaultCustomerId && activeCustomers.some((customer) => customer.id === defaultCustomerId)
       ? defaultCustomerId
       : activeCustomers[0]?.id ?? "");
+  const [hasValidCustomer, setHasValidCustomer] = useState(Boolean(initialCustomerId));
   const messageId = "follow-up-form-message";
 
   useEffect(() => {
@@ -59,30 +61,22 @@ export function FollowUpForm({
           <label htmlFor="follow-up-customer" className="block text-sm font-semibold text-slate-800">
             Customer
           </label>
-          <select
-            id="follow-up-customer"
-            name="customerId"
-            required
-            autoFocus
-            defaultValue={initialCustomerId}
-            aria-describedby={state.message ? messageId : undefined}
-            className="mt-2 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
-          >
-            {!initialCustomerId ? <option value="">No active customers available</option> : null}
-            {currentInactiveCustomer ? (
-              <option value={currentInactiveCustomer.id}>
-                {currentInactiveCustomer.name} (inactive current customer)
-              </option>
-            ) : null}
-            {activeCustomers.map((customer) => (
-              <option key={customer.id} value={customer.id}>
-                {customer.name}{customer.contactName ? ` · ${customer.contactName}` : ""}
-              </option>
-            ))}
-          </select>
-          <p className="mt-2 text-xs leading-5 text-slate-500">
-            New follow-ups can only be linked to active customers.
-          </p>
+          <CustomerCombobox
+            customers={customers}
+            describedBy={state.message ? messageId : undefined}
+            disabled={pending}
+            initialCustomerId={initialCustomerId}
+            onValidityChange={setHasValidCustomer}
+          />
+          {currentInactiveCustomer ? (
+            <p className="mt-2 text-xs leading-5 text-amber-700">
+              This existing follow-up can keep its inactive customer. Choose an active customer to change the relationship.
+            </p>
+          ) : (
+            <p className="mt-2 text-xs leading-5 text-slate-500">
+              New follow-ups can only be linked to active customers.
+            </p>
+          )}
         </div>
 
         <div>
@@ -173,7 +167,7 @@ export function FollowUpForm({
         <button type="button" onClick={onCancel} disabled={pending} className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none transition hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-60">
           Cancel
         </button>
-        <button type="submit" disabled={pending || activeCustomers.length === 0} className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-65">
+        <button type="submit" disabled={pending || !hasValidCustomer} className="rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white outline-none transition hover:bg-slate-800 focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-65">
           {pending ? "Saving…" : followUp ? "Save changes" : "Create follow-up"}
         </button>
       </div>
