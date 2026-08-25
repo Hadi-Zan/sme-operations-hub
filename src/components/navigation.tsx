@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const navigationItems = [
   { label: "Dashboard", href: "/" },
+  { label: "Attention", href: "/alerts" },
   { label: "Tasks", href: "/tasks" },
   { label: "Inventory", href: "/inventory" },
   { label: "Customers", href: "/customers" },
@@ -13,10 +14,11 @@ const navigationItems = [
 ] as const;
 
 type NavigationProps = {
+  attentionCount: number;
   variant: "desktop" | "mobile";
 };
 
-export function Navigation({ variant }: NavigationProps) {
+export function Navigation({ attentionCount, variant }: NavigationProps) {
   const pathname = usePathname();
   const isDesktop = variant === "desktop";
 
@@ -40,7 +42,7 @@ export function Navigation({ variant }: NavigationProps) {
                       ? "bg-white/10 text-white"
                       : "text-slate-400 hover:bg-white/[0.06] hover:text-slate-100"
                   }`
-                : `rounded-lg px-3 py-2 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                : `inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                     isActive
                       ? "bg-slate-950 text-white"
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
@@ -60,6 +62,20 @@ export function Navigation({ variant }: NavigationProps) {
               </span>
             ) : null}
             <span>{item.label}</span>
+            {item.href === "/alerts" && attentionCount > 0 ? (
+              <span
+                className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums ${
+                  isDesktop
+                    ? "bg-emerald-300 text-slate-950"
+                    : isActive
+                      ? "bg-emerald-300 text-slate-950"
+                      : "bg-rose-100 text-rose-700"
+                }`}
+                aria-label={`${attentionCount} unacknowledged attention ${attentionCount === 1 ? "item" : "items"}`}
+              >
+                {attentionCount > 99 ? "99+" : attentionCount}
+              </span>
+            ) : null}
           </Link>
         );
       })}

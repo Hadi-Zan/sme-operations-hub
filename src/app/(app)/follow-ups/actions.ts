@@ -105,7 +105,9 @@ async function validateActiveCustomer(workspaceId: string, customerId: string) {
 function revalidateFollowUpViews() {
   revalidatePath("/follow-ups");
   revalidatePath("/customers");
+  revalidatePath("/alerts");
   revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function createFollowUp(

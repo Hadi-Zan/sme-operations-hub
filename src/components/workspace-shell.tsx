@@ -6,13 +6,20 @@ import type { CurrentUser } from "@/lib/auth";
 import type { Workspace, WorkspaceRole } from "@/lib/supabase/database.types";
 
 type WorkspaceShellProps = {
+  attentionCount: number;
   children: ReactNode;
   role: WorkspaceRole;
   user: CurrentUser;
   workspace: Workspace;
 };
 
-export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShellProps) {
+export function WorkspaceShell({
+  attentionCount,
+  children,
+  role,
+  user,
+  workspace,
+}: WorkspaceShellProps) {
   const roleLabel = role === "owner" ? "Workspace owner" : "Workspace member";
 
   return (
@@ -35,7 +42,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
           Workspace
         </div>
         <div className="mt-3">
-          <Navigation variant="desktop" />
+          <Navigation attentionCount={attentionCount} variant="desktop" />
         </div>
 
         <div className="mt-auto">
@@ -45,7 +52,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
               <p className="truncate text-xs font-semibold text-slate-200">{workspace.name}</p>
             </div>
             <p className="mt-2 text-[11px] leading-5 text-slate-500">
-              Tasks, inventory, customers, and follow-ups use live workspace data.
+              Live operational data and attention signals for this workspace.
             </p>
           </div>
 
@@ -86,7 +93,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
 
             <div className="flex items-center gap-3">
               <span className="hidden rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-800 sm:inline-flex">
-                Live operations data · demo weekly pulse
+                Live operations attention
               </span>
               <span className="flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-bold text-slate-700 shadow-sm lg:hidden">
                 {user.initials}
@@ -98,7 +105,7 @@ export function WorkspaceShell({ children, role, user, workspace }: WorkspaceShe
           </div>
 
           <div className="overflow-x-auto border-t border-slate-100 px-3 py-2 lg:hidden">
-            <Navigation variant="mobile" />
+            <Navigation attentionCount={attentionCount} variant="mobile" />
           </div>
         </header>
 

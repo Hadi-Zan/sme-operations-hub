@@ -73,7 +73,9 @@ async function getOwnerContext() {
 function revalidateCustomerViews() {
   revalidatePath("/customers");
   revalidatePath("/follow-ups");
+  revalidatePath("/alerts");
   revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function createCustomer(

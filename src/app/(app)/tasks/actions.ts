@@ -109,7 +109,9 @@ async function validateAssignee(workspaceId: string, assignedTo: string | null) 
 
 function revalidateTaskViews() {
   revalidatePath("/tasks");
+  revalidatePath("/alerts");
   revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function createTask(

@@ -79,6 +79,7 @@ export async function updateWorkspaceProfile(
   }
 
   revalidatePath("/", "layout");
+  revalidatePath("/alerts");
   revalidatePath("/settings");
   return { status: "success", message: "Workspace profile updated." };
 }

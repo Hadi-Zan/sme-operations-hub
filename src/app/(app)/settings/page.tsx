@@ -64,13 +64,12 @@ export default async function SettingsPage() {
             </p>
           </section>
 
-          <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
-              Current product boundary
+          <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+              Live operations
             </p>
-            <p className="mt-2 text-sm leading-6 text-amber-900">
-              Tasks, inventory, customers, and follow-ups use live workspace data. The dashboard
-              weekly pulse remains clearly labelled demo content.
+            <p className="mt-2 text-sm leading-6 text-emerald-900">
+              Tasks, inventory, customers, follow-ups, and attention signals are derived from live workspace data.
             </p>
           </section>
         </aside>

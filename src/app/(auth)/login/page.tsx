@@ -78,7 +78,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </p>
         </div>
         <p className="text-xs leading-5 text-slate-500">
-          Core operations use live workspace data. The dashboard weekly pulse remains a labelled demo.
+          Live workspace data keeps tasks, stock, customers, follow-ups, and operational attention together.
         </p>
       </aside>
     </main>

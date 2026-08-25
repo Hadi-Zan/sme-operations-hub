@@ -152,7 +152,9 @@ async function getConfiguredContext() {
 
 function revalidateInventoryViews() {
   revalidatePath("/inventory");
+  revalidatePath("/alerts");
   revalidatePath("/");
+  revalidatePath("/", "layout");
 }
 
 export async function createInventoryItem(

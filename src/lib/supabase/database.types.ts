@@ -11,10 +11,53 @@ export type TaskPriority = "high" | "low" | "medium" | "urgent";
 export type TaskStatus = "completed" | "in_progress" | "todo";
 export type InventoryMovementType = "adjustment" | "stock_in" | "stock_out";
 export type FollowUpStatus = "completed" | "pending";
+export type AlertType =
+  | "follow_up_due_today"
+  | "follow_up_overdue"
+  | "inventory_low_stock"
+  | "task_overdue"
+  | "task_urgent_today";
+export type AlertSeverity = "critical" | "high" | "medium";
+export type AttentionSourceType = "follow_up" | "inventory" | "task";
 
 export type Database = {
   public: {
     Tables: {
+      alert_acknowledgements: {
+        Row: {
+          acknowledged_at: string;
+          alert_type: AlertType;
+          condition_fingerprint: string;
+          source_id: string;
+          user_id: string;
+          workspace_id: string;
+        };
+        Insert: {
+          acknowledged_at?: string;
+          alert_type: AlertType;
+          condition_fingerprint: string;
+          source_id: string;
+          user_id: string;
+          workspace_id: string;
+        };
+        Update: {
+          acknowledged_at?: string;
+          alert_type?: AlertType;
+          condition_fingerprint?: string;
+          source_id?: string;
+          user_id?: string;
+          workspace_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "alert_acknowledgements_member_fkey";
+            columns: ["workspace_id", "user_id"];
+            isOneToOne: false;
+            referencedRelation: "workspace_members";
+            referencedColumns: ["workspace_id", "user_id"];
+          },
+        ];
+      };
       customers: {
         Row: {
           address: string | null;
@@ -424,6 +467,24 @@ export type Database = {
         };
         Relationships: [];
       };
+      operations_attention_items: {
+        Row: {
+          action_path: string;
+          alert_type: AlertType;
+          assigned_to: string | null;
+          condition_fingerprint: string;
+          detail: string;
+          effective_date: string;
+          severity: AlertSeverity;
+          sort_rank: number;
+          source_id: string;
+          source_type: AttentionSourceType;
+          source_updated_at: string;
+          title: string;
+          workspace_id: string;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       create_inventory_item_with_opening_stock: {
@@ -451,3 +512,7 @@ export type InventoryMovement = Database["public"]["Tables"]["inventory_movement
 export type InventoryItemBalance = Database["public"]["Views"]["inventory_item_balances"]["Row"];
 export type Customer = Database["public"]["Tables"]["customers"]["Row"];
 export type FollowUp = Database["public"]["Tables"]["follow_ups"]["Row"];
+export type AlertAcknowledgement =
+  Database["public"]["Tables"]["alert_acknowledgements"]["Row"];
+export type OperationsAttentionItem =
+  Database["public"]["Views"]["operations_attention_items"]["Row"];
