@@ -1,10 +1,9 @@
 import Link from "next/link";
-import {
-  demoSummaryMetrics,
-  followUps,
-  workstreamProgress,
-} from "@/lib/demo-data";
+import { customerInitials } from "@/lib/customers";
+import { workstreamProgress } from "@/lib/demo-data";
 import { requireAccountContext } from "@/lib/auth";
+import { getDashboardFollowUpData } from "@/lib/follow-up-data";
+import { formatFollowUpDate, formatFollowUpTime } from "@/lib/follow-ups";
 import { getDashboardInventoryData } from "@/lib/inventory-data";
 import { formatInventoryQuantity } from "@/lib/inventory";
 import { getDashboardTaskData } from "@/lib/task-data";
@@ -18,9 +17,10 @@ export default async function DashboardPage() {
   const context = await requireAccountContext();
   if (context.status !== "configured") return null;
 
-  const [taskData, inventoryData] = await Promise.all([
+  const [taskData, inventoryData, followUpData] = await Promise.all([
     getDashboardTaskData(context.workspace.id, context.workspace.timezone),
     getDashboardInventoryData(context.workspace.id),
+    getDashboardFollowUpData(context.workspace.id, context.workspace.timezone),
   ]);
   const firstName = context.user.displayName.split(/\s+/)[0];
   const summaryMetrics = [
@@ -51,7 +51,16 @@ export default async function DashboardPage() {
       change: "Live",
       tone: "bg-amber-50 text-amber-800 ring-amber-600/10",
     },
-    ...demoSummaryMetrics,
+    {
+      label: "Follow-ups",
+      value: String(followUpData.pending),
+      detail:
+        followUpData.overdue > 0
+          ? `${followUpData.overdue} overdue · ${followUpData.dueToday} due today`
+          : `${followUpData.dueToday} due today · none overdue`,
+      change: "Live",
+      tone: "bg-emerald-50 text-emerald-700 ring-emerald-600/10",
+    },
   ];
 
   return (
@@ -65,7 +74,7 @@ export default async function DashboardPage() {
             <span>{taskData.formattedDate}</span>
             <span aria-hidden="true" className="size-1 rounded-full bg-slate-300" />
             <span className="font-medium text-emerald-700">
-              Live tasks and inventory · sample follow-up data
+              Live tasks, inventory, customers, and follow-ups · demo weekly pulse
             </span>
           </div>
           <h1
@@ -293,34 +302,65 @@ export default async function DashboardPage() {
                 Customer care
               </p>
               <h2 id="followups-heading" className="mt-1 text-lg font-semibold text-slate-950">
-                Upcoming follow-ups
+                Follow-ups needing attention
               </h2>
             </div>
-            <span className="rounded-full bg-sky-50 px-2.5 py-1 text-[11px] font-semibold text-sky-700">
-              Demo data
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-700">
+                Live data
+              </span>
+              <Link
+                href="/follow-ups"
+                className="rounded-lg text-xs font-semibold text-emerald-700 outline-none transition hover:text-emerald-900 focus-visible:ring-2 focus-visible:ring-emerald-500"
+              >
+                View follow-ups
+              </Link>
+            </div>
           </div>
 
-          <div className="mt-5 divide-y divide-slate-100">
-            {followUps.map((followUp) => (
-              <article key={followUp.customer} className="flex gap-4 py-3 first:pt-0 last:pb-0">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sky-50 text-xs font-bold text-sky-700">
-                  {followUp.initials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="truncate text-sm font-semibold text-slate-800">
-                      {followUp.customer}
-                    </h3>
-                    <time className="shrink-0 text-xs font-semibold text-slate-500">
-                      {followUp.when}
-                    </time>
-                  </div>
-                  <p className="mt-1 truncate text-xs text-slate-500">{followUp.reason}</p>
-                </div>
-              </article>
-            ))}
-          </div>
+          {followUpData.items.length ? (
+            <div className="mt-5 divide-y divide-slate-100">
+              {followUpData.items.map((followUp) => {
+                const dueTime = formatFollowUpTime(followUp.dueTime);
+                const dueLabel = followUp.isOverdue
+                  ? `Overdue · ${formatFollowUpDate(followUp.dueDate)}`
+                  : followUp.isDueToday
+                    ? `Today${dueTime ? ` · ${dueTime}` : ""}`
+                    : `${formatFollowUpDate(followUp.dueDate)}${dueTime ? ` · ${dueTime}` : ""}`;
+
+                return (
+                  <article key={followUp.id} className="flex gap-4 py-3 first:pt-0 last:pb-0">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sky-50 text-xs font-bold text-sky-700">
+                      {customerInitials(followUp.customerName)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="truncate text-sm font-semibold text-slate-800">
+                          {followUp.customerName}
+                        </h3>
+                        <span
+                          className={`shrink-0 text-xs font-semibold ${followUp.isOverdue ? "text-rose-700" : "text-slate-500"}`}
+                        >
+                          {dueLabel}
+                        </span>
+                      </div>
+                      <p className="mt-1 truncate text-xs text-slate-500">{followUp.title}</p>
+                      <p className="mt-1 truncate text-[11px] text-slate-400">
+                        Assigned to {followUp.assigneeName}
+                      </p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="mt-5 rounded-xl bg-emerald-50 px-4 py-5 text-center">
+              <p className="text-sm font-semibold text-emerald-900">No pending follow-ups</p>
+              <p className="mt-1 text-xs leading-5 text-emerald-700">
+                New customer promises will appear here by due date.
+              </p>
+            </div>
+          )}
         </section>
       </div>
     </div>

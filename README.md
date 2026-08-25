@@ -1,6 +1,6 @@
 # SME Operations Hub
 
-A straightforward operations workspace for a single small service business. Phase 4 adds real, movement-backed inventory to the existing Supabase authentication, workspace, and task foundation.
+A straightforward operations workspace for a single small service business. Phase 5 adds real customers and assigned customer follow-ups to the existing Supabase authentication, workspace, task, and movement-backed inventory foundation.
 
 ## Current scope
 
@@ -12,7 +12,10 @@ A straightforward operations workspace for a single small service business. Phas
 - Live Open Tasks, Due Today, and Daily Priorities dashboard sections
 - Workspace inventory with owner-managed item metadata, member stock recording, low-stock filtering, and immutable movement history
 - Live Low Stock and Inventory Alerts dashboard sections
-- Demo-only customers, follow-ups, and unfinished dashboard content
+- Workspace customers with practical contact details, operational notes, search, and reversible deactivation
+- Customer-linked follow-ups with assignment, workspace-local due dates and times, completion outcomes, and retained history
+- Live Follow-ups dashboard summary and attention queue
+- Clearly labelled demo-only weekly pulse content
 - No public signup, password recovery, invitations, messaging, AI, billing, cron jobs, or additional operational feature databases
 
 ## Technology
@@ -59,6 +62,7 @@ Open [http://localhost:3000](http://localhost:3000).
    1. `supabase/migrations/20260823000000_phase_2_auth_foundation.sql`
    2. `supabase/migrations/20260824000000_phase_3_tasks.sql`
    3. `supabase/migrations/20260825000000_phase_4_inventory.sql`
+   4. `supabase/migrations/20260825160000_phase_5_customers_follow_ups.sql`
 6. In **Authentication → Users**, create the initial email/password user and ensure the email is confirmed. Copy the user's UUID.
 7. In the SQL Editor, run the following statement once after replacing the placeholder values:
 
@@ -97,4 +101,4 @@ npm run lint
 npm run build
 ```
 
-The repeatable RLS checks in `supabase/tests/workspace_rls.sql`, `supabase/tests/tasks_rls.sql`, and `supabase/tests/inventory_rls.sql` are designed for a non-production Supabase project and roll back their temporary test data.
+The repeatable RLS checks in `supabase/tests/workspace_rls.sql`, `supabase/tests/tasks_rls.sql`, `supabase/tests/inventory_rls.sql`, and `supabase/tests/customers_follow_ups_rls.sql` are designed for a non-production Supabase project and roll back their temporary test data.

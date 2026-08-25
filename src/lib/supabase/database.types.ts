@@ -10,10 +10,161 @@ export type WorkspaceRole = "member" | "owner";
 export type TaskPriority = "high" | "low" | "medium" | "urgent";
 export type TaskStatus = "completed" | "in_progress" | "todo";
 export type InventoryMovementType = "adjustment" | "stock_in" | "stock_out";
+export type FollowUpStatus = "completed" | "pending";
 
 export type Database = {
   public: {
     Tables: {
+      customers: {
+        Row: {
+          address: string | null;
+          contact_name: string | null;
+          created_at: string;
+          created_by: string;
+          email: string | null;
+          id: string;
+          is_active: boolean;
+          name: string;
+          notes: string | null;
+          phone: string | null;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          address?: string | null;
+          contact_name?: string | null;
+          created_at?: string;
+          created_by: string;
+          email?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          notes?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          address?: string | null;
+          contact_name?: string | null;
+          created_at?: string;
+          created_by?: string;
+          email?: string | null;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          notes?: string | null;
+          phone?: string | null;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customers_created_member_fkey";
+            columns: ["workspace_id", "created_by"];
+            isOneToOne: false;
+            referencedRelation: "workspace_members";
+            referencedColumns: ["workspace_id", "user_id"];
+          },
+          {
+            foreignKeyName: "customers_workspace_id_fkey";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      follow_ups: {
+        Row: {
+          assigned_to: string | null;
+          completed_at: string | null;
+          completed_by: string | null;
+          created_at: string;
+          created_by: string;
+          customer_id: string;
+          due_date: string;
+          due_time: string | null;
+          id: string;
+          notes: string | null;
+          outcome: string | null;
+          status: FollowUpStatus;
+          title: string;
+          updated_at: string;
+          workspace_id: string;
+        };
+        Insert: {
+          assigned_to?: string | null;
+          completed_at?: string | null;
+          completed_by?: string | null;
+          created_at?: string;
+          created_by: string;
+          customer_id: string;
+          due_date: string;
+          due_time?: string | null;
+          id?: string;
+          notes?: string | null;
+          outcome?: string | null;
+          status?: FollowUpStatus;
+          title: string;
+          updated_at?: string;
+          workspace_id: string;
+        };
+        Update: {
+          assigned_to?: string | null;
+          completed_at?: string | null;
+          completed_by?: string | null;
+          created_at?: string;
+          created_by?: string;
+          customer_id?: string;
+          due_date?: string;
+          due_time?: string | null;
+          id?: string;
+          notes?: string | null;
+          outcome?: string | null;
+          status?: FollowUpStatus;
+          title?: string;
+          updated_at?: string;
+          workspace_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "follow_ups_assigned_member_fkey";
+            columns: ["workspace_id", "assigned_to"];
+            isOneToOne: false;
+            referencedRelation: "workspace_members";
+            referencedColumns: ["workspace_id", "user_id"];
+          },
+          {
+            foreignKeyName: "follow_ups_completed_member_fkey";
+            columns: ["workspace_id", "completed_by"];
+            isOneToOne: false;
+            referencedRelation: "workspace_members";
+            referencedColumns: ["workspace_id", "user_id"];
+          },
+          {
+            foreignKeyName: "follow_ups_created_member_fkey";
+            columns: ["workspace_id", "created_by"];
+            isOneToOne: false;
+            referencedRelation: "workspace_members";
+            referencedColumns: ["workspace_id", "user_id"];
+          },
+          {
+            foreignKeyName: "follow_ups_customer_fkey";
+            columns: ["workspace_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["workspace_id", "id"];
+          },
+          {
+            foreignKeyName: "follow_ups_workspace_id_fkey";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       inventory_items: {
         Row: {
           category: string | null;
@@ -298,3 +449,5 @@ export type Task = Database["public"]["Tables"]["tasks"]["Row"];
 export type InventoryItem = Database["public"]["Tables"]["inventory_items"]["Row"];
 export type InventoryMovement = Database["public"]["Tables"]["inventory_movements"]["Row"];
 export type InventoryItemBalance = Database["public"]["Views"]["inventory_item_balances"]["Row"];
+export type Customer = Database["public"]["Tables"]["customers"]["Row"];
+export type FollowUp = Database["public"]["Tables"]["follow_ups"]["Row"];

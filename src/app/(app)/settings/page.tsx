@@ -37,7 +37,7 @@ export default async function SettingsPage() {
             </p>
             <h2 className="mt-1 text-lg font-semibold text-slate-950">Workspace details</h2>
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              These live details are stored securely in Supabase and shared by Tasks and Inventory.
+              These live details are stored securely in Supabase and shared across the operations workspace.
             </p>
           </div>
           <WorkspaceProfileForm canEdit={context.role === "owner"} workspace={context.workspace} />
@@ -69,8 +69,8 @@ export default async function SettingsPage() {
               Current product boundary
             </p>
             <p className="mt-2 text-sm leading-6 text-amber-900">
-              Tasks and inventory use live workspace data. Customers and follow-ups remain clearly
-              labelled demo features.
+              Tasks, inventory, customers, and follow-ups use live workspace data. The dashboard
+              weekly pulse remains clearly labelled demo content.
             </p>
           </section>
         </aside>
