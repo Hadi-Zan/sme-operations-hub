@@ -13,6 +13,7 @@ import {
   type AttentionFilters,
   type AttentionListItem,
 } from "@/lib/attention";
+import { formatInventoryAttentionDetail } from "@/lib/inventory";
 
 const attentionColumns =
   "workspace_id, alert_type, source_type, source_id, condition_fingerprint, severity, sort_rank, title, detail, assigned_to, effective_date, source_updated_at, action_path";
@@ -37,7 +38,10 @@ function mapAttentionItem(
         ? "Workspace-wide"
         : "Unassigned",
     conditionFingerprint: row.condition_fingerprint,
-    detail: row.detail,
+    detail:
+      row.source_type === "inventory"
+        ? formatInventoryAttentionDetail(row.detail)
+        : row.detail,
     effectiveDate: row.effective_date,
     id: attentionEpisodeKey(row.alert_type, row.source_id, row.condition_fingerprint),
     isAcknowledged: Boolean(acknowledgedAt),

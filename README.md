@@ -1,107 +1,86 @@
 # SME Operations Hub
 
-A straightforward operations workspace for a single small service business. Phase 6 adds live operational attention and an in-app daily digest to the existing Supabase authentication, workspace, task, inventory, customer, and follow-up foundation.
+SME Operations Hub is a portfolio/demo application showing how a customised internal workflow system can help a small service business coordinate daily work. It brings tasks, stock, customers, follow-ups, operational attention, and team access into one calm workspace.
 
-## Current scope
+## Business problem
 
-- Secure email/password sign-in and sign-out with Supabase Auth
-- Server-validated, cookie-based sessions and protected Next.js routes
-- One configured workspace per deployment
-- An owner-editable business profile backed by PostgreSQL and Row Level Security
-- Workspace tasks with owner management, member status updates, assignment, priority, due dates, filtering, and search
-- Live task and attention dashboard summaries
-- Workspace inventory with owner-managed item metadata, member stock recording, low-stock filtering, and immutable movement history
-- Live low-stock inventory attention
-- Workspace customers with practical contact details, operational notes, search, and reversible deactivation
-- Customer-linked follow-ups with assignment, workspace-local due dates and times, completion outcomes, and retained history
-- Live Follow-ups dashboard summary
-- A workspace-scoped Attention page for overdue tasks, urgent tasks due today, low stock, overdue follow-ups, and follow-ups due today
-- Per-user acknowledgement state that remains separate from source resolution
-- A fully live in-app daily operations digest and unacknowledged navigation count
-- No public signup, password recovery, invitations, external messaging, AI, billing, cron jobs, or email delivery
+Small teams often manage staff responsibilities, inventory, customer commitments, and access changes across disconnected spreadsheets, messages, and memory. The result is missed follow-ups, unclear ownership, late work, and low stock discovered too late. SME Operations Hub keeps these operational signals together and makes the next action visible.
 
-## Technology
+## Core features
 
-- Next.js App Router
-- TypeScript
-- Tailwind CSS
+- Operations dashboard with live task, inventory, follow-up, and attention summaries
+- In-app Attention digest derived from current database state
+- Tasks with priorities, due dates, assignments, filtering, and member status updates
+- Inventory ledger with immutable movement history, derived balances, and low-stock alerts
+- Customer records with contact context and reversible deactivation
+- Customer follow-ups with ownership, due dates, completion history, and outcomes
+- Employee invitations for new, existing confirmed, and existing unconfirmed accounts
+- Invitation resend and cancellation workflows
+- Employee deactivation and reactivation with stale-session enforcement
+- Password recovery and reset flows
+- Owner/member authorization, including owner-only Team controls
+
+## Architecture
+
+- Next.js 16 App Router, React, strict TypeScript, and Tailwind CSS
+- Server Components for data-heavy pages and Server Actions for mutations
+- Vercel deployment
 - Supabase Auth and PostgreSQL
-- ESLint
-- npm
+- Workspace-scoped Row Level Security (RLS)
+- A server-only Supabase admin client for trusted Auth operations such as invitation delivery and account lookup
 
-## Local development
+## Security model
 
-Install Node.js 24 LTS, then install dependencies:
+The application combines PostgreSQL RLS with server-side authorization. Data access is scoped to a workspace, owner/member roles control privileged operations, and deactivated memberships are enforced even when an older browser session still exists. The Supabase secret key is isolated to server-only modules and is never exposed through a `NEXT_PUBLIC_` variable.
 
-```bash
-npm install
-```
+Public signup and anonymous sign-in are disabled for the demo project. Auth links use a short-lived continuation flow that stages the token outside the visible URL and verifies it once with Supabase. Sensitive Auth routes return `Referrer-Policy: no-referrer`. These controls reduce common risks but are not a guarantee of security; a real deployment still requires environment-specific review, monitoring, and operational controls.
 
-Copy `.env.example` to `.env.local` and replace the placeholders with values from the Supabase project Connect dialog and the local application origin:
+## Live demo
 
-```dotenv
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
-SUPABASE_SECRET_KEY=sb_secret_your_server_only_key
-APP_BASE_URL=http://localhost:3000
-```
+[Open the portfolio deployment](https://sme-operations-hub-iota.vercel.app)
 
-`SUPABASE_SECRET_KEY` is server-only: never give it a `NEXT_PUBLIC_` prefix or expose it to browser code. `.env.local` is ignored by Git. Production must set `APP_BASE_URL` to the canonical HTTPS origin.
+The deployment is login-protected and contains fictional demo data only. Demo access should be shared privately rather than publishing credentials. Auth email delivery currently uses Mailtrap Email Sandbox, so this environment is not intended for real customers or production email delivery.
 
-After completing the Supabase setup below, run:
+## Automation and attention
 
-```bash
-npm run dev
-```
+The in-app operational digest is live. It is calculated from current task, inventory, and follow-up state whenever the workspace is viewed. A scheduled email digest or Cron job is intentionally outside this portfolio version.
+
+## Local setup
+
+1. Install Node.js 24 LTS and dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env.local` and provide values for these variables:
+
+   | Variable | Scope |
+   | --- | --- |
+   | `NEXT_PUBLIC_SUPABASE_URL` | Public/client-safe Supabase project URL |
+   | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public/client-safe publishable key |
+   | `SUPABASE_SECRET_KEY` | Server-only secret; never expose to client code or previews |
+   | `APP_BASE_URL` | Server-only canonical application origin; use `http://localhost:3000` locally |
+
+3. Create an isolated Supabase project and apply every SQL file in `supabase/migrations` in filename order.
+
+4. Enable the Email/Password provider, keep public signup and anonymous sign-in disabled, and add this exact local Auth redirect:
+
+   ```text
+   http://localhost:3000/auth/confirm
+   ```
+
+5. Create and confirm the initial Auth user, then create a workspace and matching owner membership using that user ID. Use fictional data in development.
+
+6. Start the application:
+
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Supabase setup
-
-1. Create a hosted Supabase project in an appropriate region and securely retain its database password.
-2. In **Authentication → Providers → Email**, enable email/password authentication, disable public user signup, and keep anonymous sign-ins disabled.
-3. In **Authentication → URL Configuration**, set the production Site URL and add `http://localhost:3000/**` as an allowed development redirect URL.
-4. In **Authentication → Password Security**, require at least eight characters and configure the strongest practical password rules. Enable leaked-password protection when available on the project plan.
-5. In the Email provider settings, set **Email OTP Expiration** to `3600` seconds for production. This shared setting also limits invitation, confirmation, and password-recovery links; the application keeps its separate 24-hour invitation eligibility and supports resend.
-6. Configure custom SMTP before production; Supabase's default mail service is for development only.
-7. Open the Supabase SQL Editor and run these migrations in order:
-   1. `supabase/migrations/20260823000000_phase_2_auth_foundation.sql`
-   2. `supabase/migrations/20260824000000_phase_3_tasks.sql`
-   3. `supabase/migrations/20260825000000_phase_4_inventory.sql`
-   4. `supabase/migrations/20260825160000_phase_5_customers_follow_ups.sql`
-   5. `supabase/migrations/20260825210000_phase_6_operations_attention.sql`
-   6. `supabase/migrations/20260826000000_phase_7a_team_auth_lifecycle.sql`
-   7. `supabase/migrations/20260827094248_phase_7b_production_hardening.sql`
-8. In **Authentication → Users**, create the initial email/password user and ensure the email is confirmed. Copy the user's UUID.
-9. In the SQL Editor, run the following statement once after replacing the placeholder values:
-
-```sql
-with configured_workspace as (
-  insert into public.workspaces (
-    name,
-    contact_email,
-    contact_phone,
-    address,
-    timezone
-  )
-  values (
-    'Your Business Name',
-    'operations@example.com',
-    '+65 6000 0000',
-    'Your business address',
-    'Asia/Singapore'
-  )
-  returning id
-)
-insert into public.workspace_members (workspace_id, user_id, role, display_name)
-select id, 'AUTH_USER_UUID'::uuid, 'owner', 'Workspace Owner'
-from configured_workspace;
-```
-
-8. Add the Project URL and publishable key to `.env.local` and to the deployment platform's environment-variable settings.
-9. Review the Supabase Security Advisor. Do not disable RLS or add broad anonymous grants to clear findings.
-
-The migration contains schema and policies only. Never commit real user credentials, customer information, or populated environment files.
+Never commit `.env.local`, credentials, Auth tokens, or real customer information.
 
 ## Quality checks
 
@@ -109,6 +88,11 @@ The migration contains schema and policies only. Never commit real user credenti
 npm run test
 npm run lint
 npm run build
+git diff --check
 ```
 
-The repeatable RLS checks in `supabase/tests/workspace_rls.sql`, `supabase/tests/tasks_rls.sql`, `supabase/tests/inventory_rls.sql`, `supabase/tests/customers_follow_ups_rls.sql`, and `supabase/tests/operations_attention_rls.sql` are designed for a non-production Supabase project and roll back their temporary test data.
+Transactional RLS regression suites are in `supabase/tests`. Run them only against an isolated development project; every suite is designed to roll back its fixtures.
+
+## Portfolio and production disclaimer
+
+This repository and its live deployment are a portfolio demonstration, not a customer production environment. A real client deployment should use an isolated Supabase project for each environment or client, real SMTP with a verified sending domain, production monitoring and backups, and security/compliance configuration appropriate to the business and data involved.

@@ -96,8 +96,27 @@ export function isInventoryMovementType(value: string): value is InventoryMoveme
 
 export function formatInventoryQuantity(value: number) {
   return new Intl.NumberFormat("en-SG", {
+    minimumFractionDigits: 0,
     maximumFractionDigits: 3,
   }).format(value);
+}
+
+const inventoryAttentionDetailPattern =
+  /^(-?\d+(?:\.\d+)?)\s+(.+?)\s+remaining;\s+reorder at\s+(-?\d+(?:\.\d+)?)\s+(.+)$/;
+
+export function formatInventoryAttentionDetail(detail: string) {
+  const match = detail.match(inventoryAttentionDetailPattern);
+  if (!match) return detail;
+
+  const [, currentQuantity, currentUnit, reorderThreshold, thresholdUnit] = match;
+  const currentValue = Number(currentQuantity);
+  const thresholdValue = Number(reorderThreshold);
+
+  if (!Number.isFinite(currentValue) || !Number.isFinite(thresholdValue)) {
+    return detail;
+  }
+
+  return `${formatInventoryQuantity(currentValue)} ${currentUnit} remaining; reorder at ${formatInventoryQuantity(thresholdValue)} ${thresholdUnit}`;
 }
 
 export function formatInventoryMovementTime(timestamp: string, timeZone: string) {
