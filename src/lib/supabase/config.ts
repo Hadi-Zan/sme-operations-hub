@@ -3,6 +3,14 @@ export type SupabaseConfig = {
   publishableKey: string;
 };
 
+export function getSupabaseCookieOptions() {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure: process.env.NODE_ENV === "production",
+  };
+}
+
 export function getSupabaseConfig(): SupabaseConfig | null {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;

@@ -27,6 +27,7 @@
 .vercel/
 .turbo/
 .cache/
+supabase/.temp/
 
 # TypeScript
 *.tsbuildinfo

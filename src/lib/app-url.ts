@@ -11,6 +11,9 @@ export function requireAppUrl() {
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     throw new Error("APP_BASE_URL must use http or https.");
   }
+  if (process.env.NODE_ENV === "production" && url.protocol !== "https:") {
+    throw new Error("APP_BASE_URL must use https in production.");
+  }
 
   return url.origin;
 }

@@ -37,14 +37,16 @@ Install Node.js 24 LTS, then install dependencies:
 npm install
 ```
 
-Copy `.env.example` to `.env.local` and replace only these placeholders with values from the Supabase project Connect dialog:
+Copy `.env.example` to `.env.local` and replace the placeholders with values from the Supabase project Connect dialog and the local application origin:
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+SUPABASE_SECRET_KEY=sb_secret_your_server_only_key
+APP_BASE_URL=http://localhost:3000
 ```
 
-Never add a Supabase secret or legacy service-role key to this application. `.env.local` is ignored by Git.
+`SUPABASE_SECRET_KEY` is server-only: never give it a `NEXT_PUBLIC_` prefix or expose it to browser code. `.env.local` is ignored by Git. Production must set `APP_BASE_URL` to the canonical HTTPS origin.
 
 After completing the Supabase setup below, run:
 
@@ -60,14 +62,18 @@ Open [http://localhost:3000](http://localhost:3000).
 2. In **Authentication → Providers → Email**, enable email/password authentication, disable public user signup, and keep anonymous sign-ins disabled.
 3. In **Authentication → URL Configuration**, set the production Site URL and add `http://localhost:3000/**` as an allowed development redirect URL.
 4. In **Authentication → Password Security**, require at least eight characters and configure the strongest practical password rules. Enable leaked-password protection when available on the project plan.
-5. Open the Supabase SQL Editor and run these migrations in order:
+5. In the Email provider settings, set **Email OTP Expiration** to `3600` seconds for production. This shared setting also limits invitation, confirmation, and password-recovery links; the application keeps its separate 24-hour invitation eligibility and supports resend.
+6. Configure custom SMTP before production; Supabase's default mail service is for development only.
+7. Open the Supabase SQL Editor and run these migrations in order:
    1. `supabase/migrations/20260823000000_phase_2_auth_foundation.sql`
    2. `supabase/migrations/20260824000000_phase_3_tasks.sql`
    3. `supabase/migrations/20260825000000_phase_4_inventory.sql`
    4. `supabase/migrations/20260825160000_phase_5_customers_follow_ups.sql`
    5. `supabase/migrations/20260825210000_phase_6_operations_attention.sql`
-6. In **Authentication → Users**, create the initial email/password user and ensure the email is confirmed. Copy the user's UUID.
-7. In the SQL Editor, run the following statement once after replacing the placeholder values:
+   6. `supabase/migrations/20260826000000_phase_7a_team_auth_lifecycle.sql`
+   7. `supabase/migrations/20260827094248_phase_7b_production_hardening.sql`
+8. In **Authentication → Users**, create the initial email/password user and ensure the email is confirmed. Copy the user's UUID.
+9. In the SQL Editor, run the following statement once after replacing the placeholder values:
 
 ```sql
 with configured_workspace as (
