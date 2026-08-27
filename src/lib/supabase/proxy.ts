@@ -4,6 +4,18 @@ import { getSupabaseConfig } from "@/lib/supabase/config";
 import type { Database } from "@/lib/supabase/database.types";
 
 const LOGIN_PATH = "/login";
+const PUBLIC_AUTH_PATHS = new Set([
+  LOGIN_PATH,
+  "/forgot-password",
+  "/auth/confirm",
+  "/auth/confirm/stage",
+  "/auth/continue",
+  "/auth/error",
+]);
+
+export function isPublicAuthPath(pathname: string) {
+  return PUBLIC_AUTH_PATHS.has(pathname);
+}
 
 function redirectWithResponseState(response: NextResponse, url: URL) {
   const redirectResponse = NextResponse.redirect(url);
@@ -31,9 +43,10 @@ function loginUrl(request: NextRequest, notice?: string) {
 export async function updateSession(request: NextRequest) {
   const config = getSupabaseConfig();
   const isLoginRoute = request.nextUrl.pathname === LOGIN_PATH;
+  const isPublicRoute = isPublicAuthPath(request.nextUrl.pathname);
 
   if (!config) {
-    return isLoginRoute
+    return isPublicRoute
       ? NextResponse.next()
       : NextResponse.redirect(loginUrl(request, "configuration"));
   }
@@ -67,7 +80,7 @@ export async function updateSession(request: NextRequest) {
     const { data, error } = await supabase.auth.getClaims();
     const isAuthenticated = !error && Boolean(data?.claims?.sub);
 
-    if (!isAuthenticated && !isLoginRoute) {
+    if (!isAuthenticated && !isPublicRoute) {
       return redirectWithResponseState(response, loginUrl(request));
     }
 
@@ -80,7 +93,7 @@ export async function updateSession(request: NextRequest) {
 
     return response;
   } catch {
-    return isLoginRoute
+    return isPublicRoute
       ? response
       : redirectWithResponseState(response, loginUrl(request, "unavailable"));
   }

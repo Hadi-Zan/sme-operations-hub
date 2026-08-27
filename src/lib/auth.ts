@@ -21,6 +21,12 @@ export type AccountContext =
       workspace: Workspace;
     }
   | {
+      displayName: string;
+      status: "deactivated";
+      user: CurrentUser;
+      workspaceId: string;
+    }
+  | {
       status: "unconfigured";
       user: CurrentUser;
     };
@@ -88,12 +94,21 @@ export const getAccountContext = cache(async (): Promise<AccountContext | null> 
   const supabase = await createClient();
   const { data: membership, error: membershipError } = await supabase
     .from("workspace_members")
-    .select("workspace_id, role")
+    .select("workspace_id, role, status, display_name")
     .eq("user_id", user.id)
     .maybeSingle();
 
   if (membershipError || !membership) {
     return { status: "unconfigured", user };
+  }
+
+  if (membership.status === "deactivated") {
+    return {
+      displayName: membership.display_name,
+      status: "deactivated",
+      user,
+      workspaceId: membership.workspace_id,
+    };
   }
 
   const { data: workspace, error: workspaceError } = await supabase

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AccountNotConfigured } from "@/components/account-not-configured";
+import { AccountAccessDeactivated } from "@/components/account-access-deactivated";
 import { WorkspaceShell } from "@/components/workspace-shell";
 import { requireAccountContext } from "@/lib/auth";
 import { getAttentionNavigationCount } from "@/lib/attention-data";
@@ -11,6 +12,10 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
 
   if (context.status === "unconfigured") {
     return <AccountNotConfigured email={context.user.email} />;
+  }
+
+  if (context.status === "deactivated") {
+    return <AccountAccessDeactivated email={context.user.email} />;
   }
 
   const attentionCount = await getAttentionNavigationCount(

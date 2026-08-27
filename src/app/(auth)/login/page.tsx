@@ -16,6 +16,7 @@ type LoginPageProps = {
 
 const notices: Record<string, string> = {
   configuration: "Supabase has not been configured for this deployment yet.",
+  "password-reset": "Password updated. Sign in again with your new password.",
   unavailable: "Authentication is temporarily unavailable. Please try again.",
 };
 

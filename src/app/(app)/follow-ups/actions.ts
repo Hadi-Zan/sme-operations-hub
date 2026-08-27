@@ -86,6 +86,7 @@ async function validateAssignee(workspaceId: string, assignedTo: string | null) 
     .select("user_id")
     .eq("workspace_id", workspaceId)
     .eq("user_id", assignedTo)
+    .eq("status", "active")
     .maybeSingle();
   return !error && Boolean(data);
 }

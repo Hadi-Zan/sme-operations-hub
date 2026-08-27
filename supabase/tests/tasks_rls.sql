@@ -86,6 +86,49 @@ begin
   if not has_table_privilege('authenticated', 'public.tasks', 'select') then
     raise exception 'RLS test failed: authenticated users lack task SELECT privileges';
   end if;
+
+  if not exists (
+    select 1
+    from pg_constraint as constraint_record
+    where constraint_record.conname = 'tasks_assigned_member_fkey'
+      and constraint_record.contype = 'f'
+      and constraint_record.conrelid = 'public.tasks'::regclass
+      and constraint_record.confrelid = 'public.workspace_members'::regclass
+      and constraint_record.conkey = array[
+        (
+          select attribute.attnum
+          from pg_attribute as attribute
+          where attribute.attrelid = 'public.tasks'::regclass
+            and attribute.attname = 'workspace_id'
+            and not attribute.attisdropped
+        ),
+        (
+          select attribute.attnum
+          from pg_attribute as attribute
+          where attribute.attrelid = 'public.tasks'::regclass
+            and attribute.attname = 'assigned_to'
+            and not attribute.attisdropped
+        )
+      ]::smallint[]
+      and constraint_record.confkey = array[
+        (
+          select attribute.attnum
+          from pg_attribute as attribute
+          where attribute.attrelid = 'public.workspace_members'::regclass
+            and attribute.attname = 'workspace_id'
+            and not attribute.attisdropped
+        ),
+        (
+          select attribute.attnum
+          from pg_attribute as attribute
+          where attribute.attrelid = 'public.workspace_members'::regclass
+            and attribute.attname = 'user_id'
+            and not attribute.attisdropped
+        )
+      ]::smallint[]
+  ) then
+    raise exception 'RLS test failed: task assignee composite membership foreign key is missing or incorrect';
+  end if;
 end;
 $$;
 
@@ -156,6 +199,9 @@ end;
 $$;
 
 do $$
+declare
+  assignment_error_state text;
+  assignment_error_message text;
 begin
   begin
     insert into public.tasks (
@@ -172,7 +218,16 @@ begin
     );
     raise exception 'RLS test failed: cross-workspace assignment unexpectedly succeeded';
   exception
-    when foreign_key_violation then null;
+    when check_violation then
+      get stacked diagnostics
+        assignment_error_state = returned_sqlstate,
+        assignment_error_message = message_text;
+
+      if assignment_error_state <> '23514'
+        or assignment_error_message <> 'Work can only be assigned to an active workspace member.'
+      then
+        raise exception 'RLS test failed: cross-workspace assignment returned an unexpected active-assignee error';
+      end if;
   end;
 
   begin

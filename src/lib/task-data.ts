@@ -76,7 +76,7 @@ async function getWorkspaceTasksAndMembers(workspaceId: string) {
     supabase.from("tasks").select(taskColumns).eq("workspace_id", workspaceId),
     supabase
       .from("workspace_members")
-      .select("user_id, display_name, role")
+      .select("user_id, display_name, role, status")
       .eq("workspace_id", workspaceId)
       .order("display_name"),
   ]);
@@ -85,12 +85,16 @@ async function getWorkspaceTasksAndMembers(workspaceId: string) {
     throw new Error("Workspace tasks could not be loaded.");
   }
 
-  const members: WorkspaceMemberOption[] = membersResult.data.map((member) => ({
+  const memberNames = new Map(
+    membersResult.data.map((member) => [member.user_id, member.display_name]),
+  );
+  const members: WorkspaceMemberOption[] = membersResult.data
+    .filter((member) => member.status === "active")
+    .map((member) => ({
     displayName: member.display_name,
     role: member.role,
     userId: member.user_id,
   }));
-  const memberNames = new Map(members.map((member) => [member.userId, member.displayName]));
   const tasks = mapTasks(tasksResult.data, memberNames).sort(sortTasks);
 
   return { members, tasks };

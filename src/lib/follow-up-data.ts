@@ -96,7 +96,7 @@ async function getWorkspaceFollowUps(workspaceId: string, timeZone: string) {
       .order("name"),
     supabase
       .from("workspace_members")
-      .select("user_id, display_name, role")
+      .select("user_id, display_name, role, status")
       .eq("workspace_id", workspaceId)
       .order("display_name"),
   ]);
@@ -113,13 +113,17 @@ async function getWorkspaceFollowUps(workspaceId: string, timeZone: string) {
     name: customer.name,
     phone: customer.phone,
   }));
-  const members: FollowUpMemberOption[] = membersResult.data.map((member) => ({
+  const memberNames = new Map(
+    membersResult.data.map((member) => [member.user_id, member.display_name]),
+  );
+  const members: FollowUpMemberOption[] = membersResult.data
+    .filter((member) => member.status === "active")
+    .map((member) => ({
     displayName: member.display_name,
     role: member.role,
     userId: member.user_id,
   }));
   const customerMap = new Map(customers.map((customer) => [customer.id, customer]));
-  const memberNames = new Map(members.map((member) => [member.userId, member.displayName]));
   const today = getDateInWorkspace(new Date(), timeZone);
   const followUps = mapFollowUps(
     followUpsResult.data,

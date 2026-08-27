@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { WorkspaceProfileForm } from "@/components/workspace-profile-form";
 import { requireAccountContext } from "@/lib/auth";
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default async function SettingsPage() {
   const context = await requireAccountContext();
 
-  if (context.status === "unconfigured") return null;
+  if (context.status !== "configured") return null;
 
   return (
     <div className="mx-auto w-full max-w-[1400px] p-4 sm:p-6 lg:p-8">
@@ -44,6 +45,13 @@ export default async function SettingsPage() {
         </section>
 
         <aside className="space-y-6">
+          {context.role === "owner" ? (
+            <Link href="/settings/team" className="block rounded-2xl border border-emerald-200 bg-emerald-50 p-6 outline-none transition hover:border-emerald-300 focus-visible:ring-2 focus-visible:ring-emerald-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">Team management</p>
+              <p className="mt-2 text-lg font-semibold text-emerald-950">Manage employees →</p>
+              <p className="mt-2 text-sm leading-6 text-emerald-900">Invite, rename, deactivate, or reactivate workspace members.</p>
+            </Link>
+          ) : null}
           <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
               Signed-in user
