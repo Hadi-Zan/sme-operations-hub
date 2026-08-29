@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigationItems = [
-  { label: "Dashboard", href: "/" },
+  { label: "Dashboard", href: "/dashboard" },
   { label: "Attention", href: "/alerts" },
   { label: "Tasks", href: "/tasks" },
   { label: "Inventory", href: "/inventory" },
@@ -28,7 +28,7 @@ export function Navigation({ attentionCount, variant }: NavigationProps) {
       className={isDesktop ? "flex flex-col gap-1" : "flex min-w-max gap-1"}
     >
       {navigationItems.map((item, index) => {
-        const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
 
         return (
           <Link

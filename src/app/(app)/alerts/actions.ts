@@ -34,7 +34,7 @@ async function getConfiguredContext() {
 
 function revalidateAttentionViews() {
   revalidatePath("/alerts");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/", "layout");
 }
 

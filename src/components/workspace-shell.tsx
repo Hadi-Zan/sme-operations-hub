@@ -26,7 +26,7 @@ export function WorkspaceShell({
     <div className="min-h-screen bg-slate-100 lg:grid lg:grid-cols-[264px_minmax(0,1fr)]">
       <aside className="sticky top-0 hidden h-screen flex-col bg-slate-950 px-4 py-5 text-white lg:flex">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-3 rounded-xl px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
         >
           <span className="flex size-10 items-center justify-center rounded-xl bg-emerald-300 text-xs font-black tracking-tight text-slate-950">
@@ -75,7 +75,7 @@ export function WorkspaceShell({
         <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/95 backdrop-blur">
           <div className="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex items-center gap-2 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 lg:hidden"
             >
               <span className="flex size-8 items-center justify-center rounded-lg bg-slate-950 text-[10px] font-black text-emerald-300">

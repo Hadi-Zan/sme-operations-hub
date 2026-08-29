@@ -7,7 +7,9 @@ import {
 import type { Database } from "@/lib/supabase/database.types";
 
 const LOGIN_PATH = "/login";
-const PUBLIC_AUTH_PATHS = new Set([
+const DASHBOARD_PATH = "/dashboard";
+const PUBLIC_PATHS = new Set([
+  "/",
   LOGIN_PATH,
   "/forgot-password",
   "/auth/confirm",
@@ -16,8 +18,8 @@ const PUBLIC_AUTH_PATHS = new Set([
   "/auth/error",
 ]);
 
-export function isPublicAuthPath(pathname: string) {
-  return PUBLIC_AUTH_PATHS.has(pathname);
+export function isPublicPath(pathname: string) {
+  return PUBLIC_PATHS.has(pathname);
 }
 
 function redirectWithResponseState(response: NextResponse, url: URL) {
@@ -46,7 +48,7 @@ function loginUrl(request: NextRequest, notice?: string) {
 export async function updateSession(request: NextRequest) {
   const config = getSupabaseConfig();
   const isLoginRoute = request.nextUrl.pathname === LOGIN_PATH;
-  const isPublicRoute = isPublicAuthPath(request.nextUrl.pathname);
+  const isPublicRoute = isPublicPath(request.nextUrl.pathname);
 
   if (!config) {
     return isPublicRoute
@@ -90,7 +92,7 @@ export async function updateSession(request: NextRequest) {
 
     if (isAuthenticated && isLoginRoute) {
       const dashboardUrl = request.nextUrl.clone();
-      dashboardUrl.pathname = "/";
+      dashboardUrl.pathname = DASHBOARD_PATH;
       dashboardUrl.search = "";
       return redirectWithResponseState(response, dashboardUrl);
     }

@@ -107,7 +107,7 @@ function revalidateFollowUpViews() {
   revalidatePath("/follow-ups");
   revalidatePath("/customers");
   revalidatePath("/alerts");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/", "layout");
 }
 

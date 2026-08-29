@@ -8,7 +8,7 @@ It brings tasks, inventory, customers, follow-ups, operational attention, and em
 
 Built with Next.js, React, Supabase Auth/PostgreSQL, Row Level Security, and Vercel.
 
-Live demo: https://sme-operations-hub-iota.vercel.app
+Public project overview: https://sme-operations-hub-iota.vercel.app
 
 This is a fictional portfolio deployment with sample data—not a real customer system. Demo access is shared privately.
 
@@ -30,8 +30,8 @@ The stack is Next.js 16, React 19, strict TypeScript, Tailwind CSS, Supabase Aut
 
 The interesting engineering work was less about CRUD and more about lifecycle: keeping acknowledgements tied to the correct attention episode, preserving an immutable stock trail, handling new/unconfirmed/existing Auth users safely, and blocking deactivated members even when an older Auth session still exists.
 
-Live demo: https://sme-operations-hub-iota.vercel.app
+Public project overview: https://sme-operations-hub-iota.vercel.app
 
-This is a fictional, login-protected portfolio deployment with sample data and sandboxed email—not a real customer production system. Demo access is shared privately.
+This is a fictional portfolio deployment with sample data and sandboxed email—not a real customer production system. The working application remains login-protected, no credentials are published, and access is shared privately.
 
 #Nextjs #React #Supabase #PostgreSQL #TypeScript #SoftwareEngineering

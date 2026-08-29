@@ -74,7 +74,7 @@ function revalidateCustomerViews() {
   revalidatePath("/customers");
   revalidatePath("/follow-ups");
   revalidatePath("/alerts");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   revalidatePath("/", "layout");
 }
 

@@ -35,7 +35,7 @@ export async function signIn(
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function signOut() {

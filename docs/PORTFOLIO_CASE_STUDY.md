@@ -111,7 +111,7 @@ The release checks also include ESLint, the production Next.js build, and owner/
 
 The Next.js application is deployed on Vercel. Supabase hosts Auth and PostgreSQL, including the Data API, functions, views, triggers, and RLS policies. Supabase Auth email is routed to Mailtrap Email Sandbox for demonstration, so invitation and recovery messages are not delivered as production email.
 
-The live demo is available at [sme-operations-hub-iota.vercel.app](https://sme-operations-hub-iota.vercel.app). It is login-protected; credentials are shared privately and are not stored in the repository.
+The public portfolio overview is available at [sme-operations-hub-iota.vercel.app](https://sme-operations-hub-iota.vercel.app). The working operational application remains login-protected, no credentials are published, and all displayed business data is fictional.
 
 ## What I learned
 

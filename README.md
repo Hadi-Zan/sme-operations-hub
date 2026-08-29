@@ -2,9 +2,9 @@
 
 SME Operations Hub is a portfolio application that demonstrates how a custom internal system can bring a small service business's daily work into one secure workspace. It combines tasks, stock control, customer records, follow-ups, operational attention, and employee access management in a calm owner-facing interface.
 
-> **Portfolio demo:** This is a fictional, login-protected demonstration—not a real customer deployment. The data shown is sample data, and outbound Auth email is routed to Mailtrap Sandbox.
+> **Portfolio demo:** The public URL presents a portfolio overview using fictional sample data. The working operational application remains login-protected, and outbound Auth email is routed to Mailtrap Sandbox.
 
-[View the live demo](https://sme-operations-hub-iota.vercel.app)
+[View the public project overview](https://sme-operations-hub-iota.vercel.app)
 
 ![SME Operations Hub dashboard](docs/screenshots/dashboard.png)
 
@@ -110,12 +110,12 @@ No credentials, tokens, or populated environment files belong in this repository
 3. Apply the SQL files in `supabase/migrations` in filename order to an isolated Supabase project.
 4. Configure Email/Password Auth, keep public signup and anonymous sign-in disabled, and allow the local `/auth/confirm` callback.
 5. Create a fictional owner account, workspace, and matching owner membership.
-6. Run `npm run dev` and open `http://localhost:3000`.
+6. Run `npm run dev`, open `http://localhost:3000` for the public overview, and use `/login` for authenticated application access.
 
 ## Portfolio and demo limitations
 
 - This is not a real customer deployment and does not contain real operational data.
-- Demo access is intentionally login-protected; credentials should be shared privately, never committed or posted publicly.
+- Operational demo access is intentionally login-protected; no credentials are published, committed, or posted publicly.
 - Mailtrap Sandbox captures Auth messages rather than delivering production email.
 - The Attention digest is generated live in the application. There is no scheduled email digest or cron job.
 - There is no public self-sign-up, anonymous access, owner promotion, or ownership-transfer workflow.

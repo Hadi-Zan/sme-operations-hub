@@ -54,5 +54,5 @@ export async function acceptInvitation(
   }
 
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/dashboard");
 }

@@ -24,7 +24,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const config = getSupabaseConfig();
 
   if (config && (await getOptionalCurrentUser())) {
-    redirect("/");
+    redirect("/dashboard");
   }
 
   const { notice } = await searchParams;

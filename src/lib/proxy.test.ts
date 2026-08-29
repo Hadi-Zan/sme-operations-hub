@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { isPublicAuthPath } from "@/lib/supabase/proxy";
+import { isPublicPath } from "@/lib/supabase/proxy";
 
-describe("public authentication routes", () => {
+describe("public routes", () => {
   it.each([
+    "/",
     "/login",
     "/forgot-password",
     "/auth/confirm",
@@ -10,13 +11,25 @@ describe("public authentication routes", () => {
     "/auth/continue",
     "/auth/error",
   ])("allows %s before a session exists", (pathname) => {
-    expect(isPublicAuthPath(pathname)).toBe(true);
+    expect(isPublicPath(pathname)).toBe(true);
   });
 
-  it.each(["/", "/settings/team", "/reset-password", "/invite/accept"])(
-    "keeps %s session-protected",
-    (pathname) => {
-      expect(isPublicAuthPath(pathname)).toBe(false);
-    },
-  );
+  it.each([
+    "/dashboard",
+    "/tasks",
+    "/inventory",
+    "/customers",
+    "/follow-ups",
+    "/alerts",
+    "/settings",
+    "/settings/team",
+    "/reset-password",
+    "/invite/accept",
+  ])("keeps %s session-protected", (pathname) => {
+    expect(isPublicPath(pathname)).toBe(false);
+  });
+
+  it("does not treat root-prefixed paths as public", () => {
+    expect(isPublicPath("/dashboard/reports")).toBe(false);
+  });
 });

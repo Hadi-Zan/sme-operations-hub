@@ -23,7 +23,7 @@ function refreshTeamViews() {
   revalidatePath("/tasks");
   revalidatePath("/follow-ups");
   revalidatePath("/alerts");
-  revalidatePath("/");
+  revalidatePath("/dashboard");
 }
 
 async function getOwnerInvitation(invitationId: string) {
